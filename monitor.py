@@ -6,12 +6,11 @@ syn  = synapseclient.Synapse()
 
 import sys
 
-fileview = 'syn20446927'
-webhook_url = 'https://hooks.slack.com/services/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'
 fileview = sys.argv[1]
 webhook_url = sys.argv[2]
+token = sys.argv[3]
 
-syn.login()
+syn.login(password = token)
 
 
 def find_modified_entities_fileview(
