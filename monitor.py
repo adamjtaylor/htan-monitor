@@ -4,6 +4,7 @@ import synapseclient
 from synapseclient import EntityViewSchema, EntityViewType, Synapse
 
 import sys
+import os
 
 fileview = sys.argv[1]
 webhook_url = sys.argv[2]
@@ -19,17 +20,12 @@ def synapse_login(synapse_config=synapseclient.client.CONFIG_FILE):
         Synapse connection
     """
     try:
-        syn = synapseclient.Synapse(skip_checks=True, configPath=synapse_config)
+        syn = synapseclient.Synapse(skip_checks=True)
         if os.getenv("SCHEDULED_JOB_SECRETS") is not None:
             secrets = json.loads(os.getenv("SCHEDULED_JOB_SECRETS"))
             syn.login(silent=True, authToken=secrets["SYNAPSE_AUTH_TOKEN"])
         else:
             syn.login(silent=True)
-    except (SynapseNoCredentialsError, SynapseAuthenticationError):
-        raise ValueError(
-            "Login error: please make sure you have correctly "
-            "configured your client."
-        )
     return syn
 
 
