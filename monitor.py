@@ -8,9 +8,8 @@ import sys
 
 fileview = sys.argv[1]
 webhook_url = sys.argv[2]
-token = sys.argv[3]
 
-syn.login(password = token)
+syn.login()
 
 
 def find_modified_entities_fileview(
