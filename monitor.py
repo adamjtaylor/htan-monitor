@@ -2,14 +2,35 @@ import json
 import requests
 import synapseclient
 from synapseclient import EntityViewSchema, EntityViewType, Synapse
-syn  = synapseclient.Synapse()
 
 import sys
 
 fileview = sys.argv[1]
 webhook_url = sys.argv[2]
 
-syn.login()
+def synapse_login(synapse_config=synapseclient.client.CONFIG_FILE):
+    """Login to Synapse.  Looks first for secrets.
+
+    Args:
+        synapse_config: Path to synapse configuration file.
+                        Defaults to ~/.synapseConfig
+
+    Returns:
+        Synapse connection
+    """
+    try:
+        syn = synapseclient.Synapse(skip_checks=True, configPath=synapse_config)
+        if os.getenv("SCHEDULED_JOB_SECRETS") is not None:
+            secrets = json.loads(os.getenv("SCHEDULED_JOB_SECRETS"))
+            syn.login(silent=True, authToken=secrets["SYNAPSE_AUTH_TOKEN"])
+        else:
+            syn.login(silent=True)
+    except (SynapseNoCredentialsError, SynapseAuthenticationError):
+        raise ValueError(
+            "Login error: please make sure you have correctly "
+            "configured your client."
+        )
+    return syn
 
 
 def find_modified_entities_fileview(
@@ -95,7 +116,7 @@ def send_message_to_slack_blocks(webhook_url, blocks):
     if response.status_code != 200:
         raise ValueError(f"Request to slack returned an error {response.status_code}, the response is:\n{response.text}")
 
-
+syn = synapse_login()
 
 count = find_modified_entities_fileview(syn, fileview).groupby(['modifiedBy','projectId','parentId']).count().reset_index()
 
