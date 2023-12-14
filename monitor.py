@@ -125,7 +125,23 @@ count = find_modified_entities_fileview(syn, fileview).groupby(['modifiedBy','pr
 
 enriched_data = enrich_count(count, syn)
 
-slack_message_blocks = dataframe_to_slack_block_with_md_links(enriched_data)
+# Check if the dataframe is empty
+if enriched_data.empty:
+    # If no modified entities are found, prepare a simple message for Slack
+    slack_message_blocks = {
+        "blocks": [
+            {
+                "type": "section", 
+                "text": {
+                    "type": "mrkdwn", 
+                    "text": "No entities were modified in the last day"
+                }
+            }
+        ]
+    }
+else:
+    # If there are modified entities, format the message as before
+    slack_message_blocks = dataframe_to_slack_block_with_md_links(enriched_data)
 
 # Usage
 send_message_to_slack_blocks(webhook_url, slack_message_blocks)
