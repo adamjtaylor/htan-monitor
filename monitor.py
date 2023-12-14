@@ -6,8 +6,16 @@ from synapseclient import EntityViewSchema, EntityViewType, Synapse
 import sys
 import os
 
-fileview = sys.argv[1]
-webhook_url = sys.argv[2]
+
+if os.getenv("FILEVIEW") is not None:
+    fileview = os.getenv("FILEVIEW")
+else:
+    fileview = sys.argv[1]
+
+if os.getenv("WEBHOOK") is not None:
+    webhook_url = os.getenv("WEBHOOK")
+else:
+    webhook_url = sys.argv[2]
 
 def synapse_login(synapse_config=synapseclient.client.CONFIG_FILE):
     """Login to Synapse.  Looks first for secrets.
