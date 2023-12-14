@@ -19,13 +19,12 @@ def synapse_login(synapse_config=synapseclient.client.CONFIG_FILE):
     Returns:
         Synapse connection
     """
-    try:
-        syn = synapseclient.Synapse(skip_checks=True)
-        if os.getenv("SCHEDULED_JOB_SECRETS") is not None:
-            secrets = json.loads(os.getenv("SCHEDULED_JOB_SECRETS"))
-            syn.login(silent=True, authToken=secrets["SYNAPSE_AUTH_TOKEN"])
-        else:
-            syn.login(silent=True)
+    syn = synapseclient.Synapse(skip_checks=True)
+    if os.getenv("SCHEDULED_JOB_SECRETS") is not None:
+        secrets = json.loads(os.getenv("SCHEDULED_JOB_SECRETS"))
+        syn.login(silent=True, authToken=secrets["SYNAPSE_AUTH_TOKEN"])
+    else:
+        syn.login(silent=True)
     return syn
 
 
