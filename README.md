@@ -62,8 +62,6 @@ Set up an AWS Scheduled Job with the following parameters
 4. EnvVars: `FILEVIEW={fileview_synid},WEBHOOK={slack_webhook_url}`
 5. Schedule: (to run daily at 0800 UTC): `cron(0 8 * * ? *)`
 
-
-
 ## Functions
 
 - `synapse_login()`: Authenticates and connects to Synapse.
