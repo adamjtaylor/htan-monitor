@@ -49,14 +49,14 @@ A docker container is automatically built and pushed to GCHR when changes are ma
         -e FILEVIEW={fileview_synid} \
         -e WEBHOOK={slack_webhook_url} \
         -e SYNAPSE_AUTH_TOKEN={synapse_auth_token} \
-        ghcr.io/adamjtaylor/htan-monitor:latest
+        ghcr.io/ncihtan/htan-monitor:latest
     ```
 
 ### AWS Scheduled Job
 
 Set up an AWS Scheduled Job with the following parameters
 
-1. Image: `ghcr.io/adamjtaylor/htan-monitor:latest`
+1. Image: `ghcr.io/ncihtan/htan-monitor:latest`
 2. Command: `python ./monitor.py ${FILEVIEW} ${WEBHOOK}`
 3. Secrets: `SYNAPSE_AUTH_TOKEN={synapse_auth_token}`
 4. EnvVars: `FILEVIEW={fileview_synid},WEBHOOK={slack_webhook_url}`
