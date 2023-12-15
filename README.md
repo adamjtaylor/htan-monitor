@@ -39,7 +39,7 @@ A docker container is automatically built and pushed to GCHR when changes are ma
 1. Pull the Docker image:
 
     ```{bash}
-    docker pull ghcr.io/adamjtaylor/htan-monitor:latest
+    docker pull ghcr.io/ncihtan/htan-monitor:latest
     ```
 
 2. Run the Docker container
