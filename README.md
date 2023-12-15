@@ -30,7 +30,7 @@ This tool is designed to monitor activity in a specified Synapse fileview. It ch
 1. Install Python 3.x if not already installed.
 2. Clone or download this repository.
 3. Install required packages: `pip install -r requirements.txt`.
-4. Run the script: `python synapse_fileview_script.py {fileview_synid} {slack_webhook_url}`
+4. Run the script: `python monitor.py {fileview_synid} {slack_webhook_url}`
 
 ### Docker
 
