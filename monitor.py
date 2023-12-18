@@ -5,6 +5,7 @@ from synapseclient import EntityViewSchema, EntityViewType, Synapse
 
 import sys
 import os
+from tqdm import tqdm
 
 
 if os.getenv("FILEVIEW") is not None:
@@ -67,29 +68,41 @@ def enrich_count(df, syn):
     Enriches a DataFrame with user names, project names, and parent folder names from Synapse.
 
     Args:
-    df (pd.DataFrame): DataFrame containing Synapse data with columns 'modifiedBy', 'projectId', and 'parentId'.
-    syn (synapseclient.Synapse): A logged-in Synapse client instance.
+        df (pd.DataFrame): DataFrame containing Synapse data with columns 'modifiedBy', 'projectId', and 'parentId'.
+        syn (synapseclient.Synapse): A logged-in Synapse client instance.
 
     Returns:
-    pd.DataFrame: The enriched DataFrame.
+        pd.DataFrame: The enriched DataFrame.
     """
-    # Add columns for user, project name, and parent folder name
+    # Initialize columns for user, project name, and parent folder name
     df['userName'] = ''
     df['projectName'] = ''
     df['parentFolderName'] = ''
 
-    for index, row in df.iterrows():
-        # Get user info
-        user = syn.getUserProfile(row['modifiedBy'])
-        df.at[index, 'userName'] = user['userName']
+    # Initialize caches for users, projects, and folders
+    user_cache = {}
+    project_cache = {}
+    folder_cache = {}
 
-        # Get project info
-        project = syn.get(row['projectId'], downloadFile=False)
-        df.at[index, 'projectName'] = project.name
+    # Wrap iterrows with tqdm for a progress bar
+    for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="Enriching Data"):
+        # Get or cache user info
+        user_id = row['modifiedBy']
+        if user_id not in user_cache:
+            user_cache[user_id] = syn.getUserProfile(user_id)['userName']
+        df.at[index, 'userName'] = user_cache[user_id]
 
-        # Get parent folder info
-        parent_folder = syn.get(row['parentId'], downloadFile=False)
-        df.at[index, 'parentFolderName'] = parent_folder.name
+        # Get or cache project info
+        project_id = row['projectId']
+        if project_id not in project_cache:
+            project_cache[project_id] = syn.get(project_id, downloadFile=False).name
+        df.at[index, 'projectName'] = project_cache[project_id]
+
+        # Get or cache parent folder info
+        folder_id = row['parentId']
+        if folder_id not in folder_cache:
+            folder_cache[folder_id] = syn.get(folder_id, downloadFile=False).name
+        df.at[index, 'parentFolderName'] = folder_cache[folder_id]
 
     return df
 
