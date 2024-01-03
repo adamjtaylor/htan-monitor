@@ -8,6 +8,7 @@ on:
       - "dockerfile"
       - ".github/workflows/docker.yml"
       - "monitor.py"
+      - "requirements.txt"
   workflow_dispatch:
 
 env:
